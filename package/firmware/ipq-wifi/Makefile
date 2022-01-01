@@ -58,6 +58,7 @@ ALLWIFIBOARDS:= \
 	qxwlan_e2600ac-c1 \
 	qxwlan_e2600ac-c2 \
 	teltonika_rutx \
+	redmi_ax6 \
 	xiaomi_ax3600 \
 	zte_mf286d
 
@@ -162,6 +163,7 @@ $(eval $(call generate-ipq-wifi-package,plasmacloud_pa2200,Plasma Cloud PA2200))
 $(eval $(call generate-ipq-wifi-package,qxwlan_e2600ac-c1,Qxwlan E2600AC C1))
 $(eval $(call generate-ipq-wifi-package,qxwlan_e2600ac-c2,Qxwlan E2600AC C2))
 $(eval $(call generate-ipq-wifi-package,teltonika_rutx,Teltonika RUTX))
+$(eval $(call generate-ipq-wifi-package,redmi_ax6,Redmi AX6))
 $(eval $(call generate-ipq-wifi-package,xiaomi_ax3600,Xiaomi AX3600))
 $(eval $(call generate-ipq-wifi-package,zte_mf286d,ZTE MF286D))
 
