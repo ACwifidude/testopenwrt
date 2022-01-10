@@ -62,6 +62,7 @@ ALLWIFIBOARDS:= \
 	teltonika_rutx \
 	redmi_ax6 \
 	xiaomi_ax3600 \
+	xiaomi_ax9000 \
 	zte_mf286d
 
 ALLWIFIPACKAGES:=$(foreach BOARD,$(ALLWIFIBOARDS),ipq-wifi-$(BOARD))
@@ -95,8 +96,10 @@ define ipq-wifi-install-one
     $(call ipq-wifi-install-one-to,$(1),$(2),QCA9887/hw1.0),\
   $(if $(filter $(suffix $(1)),.IPQ8074 .ipq8074),\
     $(call ipq-wifi-install-ath11-one-to,$(1),$(2),IPQ8074/hw2.0),\
+  $(if $(filter $(suffix $(1)),.QCN9074 .qcn9074),\
+    $(call ipq-wifi-install-ath11-one-to,$(1),$(2),QCN9074/hw1.0),\
     $(error Unrecognized board-file suffix '$(suffix $(1))' for '$(1)')\
-  )))))
+  ))))))
 
 endef
 # Blank line required at end of above define due to foreach context
@@ -169,6 +172,7 @@ $(eval $(call generate-ipq-wifi-package,qxwlan_e2600ac-c2,Qxwlan E2600AC C2))
 $(eval $(call generate-ipq-wifi-package,teltonika_rutx,Teltonika RUTX))
 $(eval $(call generate-ipq-wifi-package,redmi_ax6,Redmi AX6))
 $(eval $(call generate-ipq-wifi-package,xiaomi_ax3600,Xiaomi AX3600))
+$(eval $(call generate-ipq-wifi-package,xiaomi_ax9000,Xiaomi AX9000))
 $(eval $(call generate-ipq-wifi-package,zte_mf286d,ZTE MF286D))
 
 $(foreach PACKAGE,$(ALLWIFIPACKAGES),$(eval $(call BuildPackage,$(PACKAGE))))
