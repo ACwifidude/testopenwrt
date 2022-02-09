@@ -1,5 +1,19 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
+&clocks {
+	bias_pll_cc_clk {
+		compatible = "fixed-clock";
+		clock-frequency = <300000000>;
+		#clock-cells = <0>;
+	};
+
+	bias_pll_nss_noc_clk {
+		compatible = "fixed-clock";
+		clock-frequency = <416500000>;
+		#clock-cells = <0>;
+	};
+};
+
 &soc {
 	switch: ess-switch@3a000000 {
 		compatible = "qcom,ess-switch-ipq807x";
