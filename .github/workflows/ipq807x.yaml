@@ -70,11 +70,14 @@ jobs:
             - name: Extract the image artifacts
               run: tar xf ipq807xx-images.tar
 
+            - name: Get the current date
+              run: echo "NOW=$(date +%F)" >> $GITHUB_ENV
+
             - name: Create a release
               uses: "marvinpinto/action-automatic-releases@latest"
               with:
                 repo_token: "${{ secrets.GITHUB_TOKEN }}"
                 prerelease: true
-                title: "Updated prebuilt images"
-                automatic_release_tag: "ipq807x-latest"
+                title: "Updated prebuilt images ${{ env.NOW }}"
+                automatic_release_tag: "ipq807x-${{ env.NOW }}"
                 files: bin/targets/ipq807x/generic/*
