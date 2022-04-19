@@ -15,6 +15,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/wolfSSL/wolfssl/archive/v$(PKG_VERSION)
 PKG_HASH:=409b4646c5f54f642de0e9f3544c3b83de7238134f5b1ff93fb44527bf119d05
 
+PKG_FLAGS:=nonshared
 PKG_FIXUP:=libtool libtool-abiver
 PKG_INSTALL:=1
 PKG_USE_MIPS16:=0
@@ -106,6 +107,23 @@ endif
 ifeq ($(CONFIG_WOLFSSL_HAS_WPAS),y)
 CONFIGURE_ARGS += \
 	--enable-wpas --enable-fortress --enable-fastmath
+endif
+
+WOLFSSL_ARM_CRYPTO=$(strip \
+	$(CONFIG_TARGET_armvirt_64) \
+	$(CONFIG_TARGET_bcm4908) \
+	$(CONFIG_TARGET_mediatek_mt7622) \
+	$(CONFIG_TARGET_mvebu_cortexa53) \
+	$(CONFIG_TARGET_mvebu_cortexa72) \
+	$(CONFIG_TARGET_octeontx) \
+	$(CONFIG_TARGET_rockchip_armv8) \
+	$(CONFIG_TARGET_sunxi_cortexa53))
+
+ifneq ($(WOLFSSL_ARM_CRYPTO),)
+	CONFIGURE_ARGS += --enable-armasm
+	TARGET_CFLAGS:=$(TARGET_CFLAGS:-mcpu%=-mcpu%+crypto)
+else ifeq ($(CONFIG_TARGET_x86_64),y)
+	CONFIGURE_ARGS += --enable-intelasm
 endif
 
 define Build/InstallDev
