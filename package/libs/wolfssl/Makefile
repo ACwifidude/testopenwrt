@@ -109,17 +109,10 @@ CONFIGURE_ARGS += \
 	--enable-wpas --enable-fortress --enable-fastmath
 endif
 
-WOLFSSL_ARM_CRYPTO=$(strip \
-	$(CONFIG_TARGET_armvirt_64) \
-	$(CONFIG_TARGET_bcm4908) \
-	$(CONFIG_TARGET_mediatek_mt7622) \
-	$(CONFIG_TARGET_mvebu_cortexa53) \
-	$(CONFIG_TARGET_mvebu_cortexa72) \
-	$(CONFIG_TARGET_octeontx) \
-	$(CONFIG_TARGET_rockchip_armv8) \
-	$(CONFIG_TARGET_sunxi_cortexa53))
+WOLFSSL_AARCH64_NO_CRYPTO = \
+	$(CONFIG_TARGET_bcm27xx)
 
-ifneq ($(WOLFSSL_ARM_CRYPTO),)
+ifneq ($(CONFIG_aarch64),$(strip $(WOLFSSL_AARCH64_NO_CRYPTO)))
 	CONFIGURE_ARGS += --enable-armasm
 	TARGET_CFLAGS:=$(TARGET_CFLAGS:-mcpu%=-mcpu%+crypto)
 else ifeq ($(CONFIG_TARGET_x86_64),y)
