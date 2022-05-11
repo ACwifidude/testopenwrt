@@ -104,3 +104,17 @@ define Device/xiaomi_ax9000
 	DEVICE_PACKAGES := ipq-wifi-xiaomi_ax9000 kmod-ath10k-ct ath10k-firmware-qca9887-ct
 endef
 TARGET_DEVICES += xiaomi_ax9000
+
+define Device/netgear_rax120
+	$(call Device/FitImage)
+	$(call Device/UbiFit)
+	DEVICE_VENDOR := Netgear
+	DEVICE_MODEL := RAX120
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	DEVICE_DTS_CONFIG := config@hk01
+	SOC := ipq8074
+	NETGEAR_HW_ID="29765589+0+512+1024+4x4+8x8"
+	DEVICE_PACKAGES := 
+endef
+TARGET_DEVICES += netgear_rax120
