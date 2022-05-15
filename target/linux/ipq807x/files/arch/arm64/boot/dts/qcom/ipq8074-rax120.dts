@@ -687,9 +687,7 @@
 			<&gcc GCC_BLSP1_AHB_CLK>;
 		clock-names = "core", "iface";
 		dmas = <&blsp_dma 18>, <&blsp_dma 19>;
-		dma-names = "tx", "rx";	
-		pinctrl-0 = <&spi_1_pins>;
-		pinctrl-names = "default";
+		dma-names = "tx", "rx";			
 		status = "okay";
 	};
 
