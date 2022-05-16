@@ -237,7 +237,8 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <0>;
 		phy-mode = "sgmii";
-	};	
+		mdio-bus = <&mdio>;
+	};
 
 	dp2: dp2 {
 		device_type = "network";
@@ -249,6 +250,7 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <1>;
 		phy-mode = "sgmii";
+		mdio-bus = <&mdio>;
 	};
 
 	dp3: dp3 {
@@ -261,6 +263,7 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <2>;
 		phy-mode = "sgmii";
+		mdio-bus = <&mdio>;
 	};
 
 	dp4: dp4 {
@@ -273,6 +276,7 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <3>;
 		phy-mode = "sgmii";
+		mdio-bus = <&mdio>;
 	};
 
 	dp5: dp5 {
@@ -285,6 +289,7 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <4>;
 		phy-mode = "sgmii";
+		mdio-bus = <&mdio>;
 	};
 
 	dp6: dp6 {
@@ -297,12 +302,13 @@
 		qcom,link-poll = <1>;
 		qcom,phy-mdio-addr = <7>;
 		phy-mode = "sgmii";
+		mdio-bus = <&mdio>;
 	};
 
 	ess-switch@3a000000 {
-		status = "okay";		
+		status = "okay";
 		pinctrl-0 = <&uniphy_pins>;
-		pinctrl-names = "default";			
+		pinctrl-names = "default";
 		switch_lan_bmp = <0x3e>; /* lan port bitmap */
 		switch_wan_bmp = <0x40>; /* wan port bitmap */
 		switch_mac_mode = <0x0>; /* mac mode for uniphy instance0*/
@@ -311,11 +317,31 @@
 		bm_tick_mode = <0>; /* bm tick mode */
 		tm_tick_mode = <0>; /* tm tick mode */	
 		mdio-bus = <&mdio>;
-		qcom,port_phyinfo {
-			port@7 {
-				port_id = <7>;
-				phy_address = <7>;
-				port_mac_sel = "QGMAC_PORT";
+			qcom,port_phyinfo {
+				port@1 {
+					port_id = <1>;
+					phy_address = <0>;
+				};
+				port@2 {
+					port_id = <2>;
+					phy_address = <1>;
+				};
+				port@3 {
+					port_id = <3>;
+					phy_address = <2>;
+				};
+				port@4 {
+					port_id = <4>;
+					phy_address = <3>;
+				};
+				port@5 {
+					port_id = <5>;
+					phy_address = <4>;
+				};
+				port@6 {
+					port_id = <6>;
+					phy_address = <5>;
+				};
 			};
 
 		port_scheduler_resource {
@@ -590,9 +616,8 @@
 					};
 				};
 			};
-		};		
-		};			
-	};	
+		};
+	};
 
 	nss-common {
 		compatible = "qcom,nss-common";
@@ -602,78 +627,80 @@
 
 	nss0: nss@40000000 {
 		compatible = "qcom,nss";
-		interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  378 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  379 IRQ_TYPE_LEVEL_HIGH>,
-				<GIC_SPI  380 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  381 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  382 IRQ_TYPE_LEVEL_HIGH>,
-				<GIC_SPI  383 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  384 IRQ_TYPE_LEVEL_HIGH>, 
-				<GIC_SPI  385 IRQ_TYPE_LEVEL_HIGH>;
-		reg = <0x39000000 0x1000>, <0x38000000 0x30000>,
-			  <0x0b111000 0x1000>;
+		interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  378 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  379 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  380 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  381 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  382 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  383 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  384 IRQ_TYPE_LEVEL_HIGH>,
+			<GIC_SPI  385 IRQ_TYPE_LEVEL_HIGH>;
+		reg = <0x39000000 0x1000>,
+			<0x38000000 0x30000>,
+			<0x0b111000 0x1000>;
 		reg-names = "nphys", "vphys", "qgic-phys";
-		clocks = <&gcc GCC_NSS_NOC_CLK>,
-			 <&gcc GCC_NSS_PTP_REF_CLK>,
-			 <&gcc GCC_NSS_CSR_CLK>, <&gcc GCC_NSS_CFG_CLK>,
-			 <&gcc GCC_NSS_IMEM_CLK>,
-			 <&gcc GCC_NSSNOC_QOSGEN_REF_CLK>,
-			 <&gcc GCC_MEM_NOC_NSS_AXI_CLK>,
-			 <&gcc GCC_NSSNOC_SNOC_CLK>,
-			 <&gcc GCC_NSSNOC_TIMEOUT_REF_CLK>,
-			 <&gcc GCC_NSS_CE_AXI_CLK>,
-			 <&gcc GCC_NSS_CE_APB_CLK>,
-			 <&gcc GCC_NSSNOC_CE_AXI_CLK>,
-			 <&gcc GCC_NSSNOC_CE_APB_CLK>,
-			 <&gcc GCC_NSSNOC_UBI0_AHB_CLK>,
-			 <&gcc GCC_UBI0_CORE_CLK>,
-			 <&gcc GCC_UBI0_AHB_CLK>,
-			 <&gcc GCC_UBI0_AXI_CLK>,
-			 <&gcc GCC_UBI0_MPT_CLK>,
-			 <&gcc GCC_UBI0_NC_AXI_CLK>;
-		clock-names = "nss-noc-clk", "nss-ptp-ref-clk",
-				  "nss-csr-clk", "nss-cfg-clk",
-				  "nss-imem-clk",
-				  "nss-nssnoc-qosgen-ref-clk",
-				  "nss-mem-noc-nss-axi-clk",
-				  "nss-nssnoc-snoc-clk",
-				  "nss-nssnoc-timeout-ref-clk",
-				  "nss-ce-axi-clk", "nss-ce-apb-clk",
-				  "nss-nssnoc-ce-axi-clk",
-				  "nss-nssnoc-ce-apb-clk",
-				  "nss-nssnoc-ahb-clk",
-				  "nss-core-clk", "nss-ahb-clk",
-				  "nss-axi-clk", "nss-mpt-clk",
-				  "nss-nc-axi-clk";
-		qcom,id = <0>;
-		qcom,num-queue = <4>;
-		qcom,num-irq = <9>;
-		qcom,num-pri = <4>;
-		qcom,load-addr = <0x40000000>;
-		qcom,low-frequency = <748800000>;
-		qcom,mid-frequency = <1497600000>;
-		qcom,max-frequency = <1689600000>;
-		qcom,bridge-enabled;
-		qcom,ipv4-enabled;
-		qcom,ipv4-reasm-enabled;
-		qcom,ipv6-enabled;
-		qcom,ipv6-reasm-enabled;
-		qcom,wlanredirect-enabled;
-		qcom,tun6rd-enabled;
-		qcom,l2tpv2-enabled;
-		qcom,gre-enabled;
-		qcom,gre-redir-enabled;
-		qcom,map-t-enabled;
-		qcom,portid-enabled;
-		qcom,ppe-enabled;
-		qcom,pppoe-enabled;
-		qcom,pptp-enabled;
-		qcom,tunipip6-enabled;
-		qcom,shaping-enabled;
-		qcom,wlan-dataplane-offload-enabled;
-		qcom,vlan-enabled;
-		npu-supply = <&npu_vreg>;		
+	    clocks = <&gcc GCC_NSS_NOC_CLK>,
+			<&gcc GCC_NSS_PTP_REF_CLK>,
+			<&gcc GCC_NSS_CSR_CLK>,
+			<&gcc GCC_NSS_CFG_CLK>,
+			<&gcc GCC_NSS_IMEM_CLK>,
+			<&gcc GCC_NSSNOC_QOSGEN_REF_CLK>,
+			<&gcc GCC_MEM_NOC_NSS_AXI_CLK>,
+			<&gcc GCC_NSSNOC_SNOC_CLK>,
+			<&gcc GCC_NSSNOC_TIMEOUT_REF_CLK>,
+			<&gcc GCC_NSS_CE_AXI_CLK>,
+			<&gcc GCC_NSS_CE_APB_CLK>,
+			<&gcc GCC_NSSNOC_CE_AXI_CLK>,
+			<&gcc GCC_NSSNOC_CE_APB_CLK>,
+			<&gcc GCC_NSSNOC_UBI0_AHB_CLK>,
+			<&gcc GCC_UBI0_CORE_CLK>,
+			<&gcc GCC_UBI0_AHB_CLK>,
+			<&gcc GCC_UBI0_AXI_CLK>,
+			<&gcc GCC_UBI0_MPT_CLK>,
+			<&gcc GCC_UBI0_NC_AXI_CLK>;
+	    clock-names = "nss-noc-clk", "nss-ptp-ref-clk",
+			"nss-csr-clk", "nss-cfg-clk",
+			"nss-imem-clk",
+			"nss-nssnoc-qosgen-ref-clk",
+			"nss-mem-noc-nss-axi-clk",
+			"nss-nssnoc-snoc-clk",
+			"nss-nssnoc-timeout-ref-clk",
+			"nss-ce-axi-clk", "nss-ce-apb-clk",
+			"nss-nssnoc-ce-axi-clk",
+			"nss-nssnoc-ce-apb-clk",
+			"nss-nssnoc-ahb-clk",
+			"nss-core-clk", "nss-ahb-clk",
+			"nss-axi-clk", "nss-mpt-clk",
+			"nss-nc-axi-clk";
+		    qcom,id = <0>;
+		    qcom,num-queue = <4>;
+		    qcom,num-irq = <9>;
+		    qcom,num-pri = <4>;
+		    qcom,load-addr = <0x40000000>;
+		    qcom,low-frequency = <748800000>;
+		    qcom,mid-frequency = <1497600000>;
+		    qcom,max-frequency = <1689600000>;
+		    qcom,bridge-enabled;
+		    qcom,ipv4-enabled;
+		    qcom,ipv4-reasm-enabled;
+		    qcom,ipv6-enabled;
+		    qcom,ipv6-reasm-enabled;
+		    qcom,wlanredirect-enabled;
+		    qcom,tun6rd-enabled;
+		    qcom,l2tpv2-enabled;
+		    qcom,gre-enabled;
+		    qcom,gre-redir-enabled;
+		    qcom,map-t-enabled;
+		    qcom,portid-enabled;
+		    qcom,ppe-enabled;
+		    qcom,pppoe-enabled;
+		    qcom,pptp-enabled;
+		    qcom,tunipip6-enabled;
+		    qcom,shaping-enabled;
+		    qcom,wlan-dataplane-offload-enabled;
+		    qcom,vlan-enabled;
+		    npu-supply = <&npu_vreg>;
 	};
 
 	blsp1_spi2: spi@78b8000 {
@@ -687,31 +714,37 @@
 			<&gcc GCC_BLSP1_AHB_CLK>;
 		clock-names = "core", "iface";
 		dmas = <&blsp_dma 18>, <&blsp_dma 19>;
-		dma-names = "tx", "rx";			
+		dma-names = "tx", "rx";
 		status = "okay";
 	};
 
-	pcie_phy2: phy@86000 {
-		compatible = "qcom,ipq8074-qmp-pcie-phy";
-		reg = <0x86000 0x1000>;
+	pcie_qmp2: phy@86000 {
+		compatible = "qcom,ipq8074-qmp-pcie-gen3-phy";
+		reg = <0x00086000 0x1000>;
 		#address-cells = <1>;
-		#size-cells = <1>;	
-		#phy-cells = <0>;
-		#clock-cells = <0>;	
+		#size-cells = <1>;
+		ranges;
 
 		clocks = <&gcc GCC_PCIE0_AUX_CLK>,
 			<&gcc GCC_PCIE0_AHB_CLK>;
 		clock-names = "aux", "cfg_ahb";
 		resets = <&gcc GCC_PCIE0_PHY_BCR>,
-			<&gcc GCC_PCIE0PHY_PHY_BCR>,
-			<&gcc GCC_PCIE0_PIPE_CLK>;
+			<&gcc GCC_PCIE0PHY_PHY_BCR>;
 		reset-names = "phy",
-				  "common",
-				  "pipe0";			
-		clock-output-names = "pcie_0_pipe_clk";
-		clock-output-rate = <250000000>;	
-		status = "disabled";
-	};	
+			"common";
+		status = "okay";
+		pcie_phy2: phy@86200 {
+			reg = <0x86200 0x16c>,
+				<0x86400 0x200>,
+				<0x86800 0x4f4>;
+			#phy-cells = <0>;
+			#clock-cells = <0>;
+			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+			clock-names = "pipe0";
+			clock-output-names = "pcie_0_pipe_clk";
+			clock-output-rate = <250000000>;
+		};
+	};
 
 	usbbam@8B04000 {
 		compatible = "qcom,usb-bam-msm";
@@ -762,7 +795,7 @@
 					0x00000000 0xFFFFFFFF \
 					0x00000000 0xFFFFFFFF \
 					0x007D0820 0x00000000 \
-					0x10482094 0x03FFFFE1>;					
+					0x10482094 0x03FFFFE1>;
 		qcom,ledc_blink_indices_cnt = <13>;
 		qcom,ledc_blink_indices = <5 6 7 14 13 1 9 10 2 11 12 3 4>;
 		qcom,ledc_blink_idx_src_pair = <3 20>, <4 21>, <5 22>;
@@ -823,7 +856,45 @@
 
 	wifi2: wifi2@f00000 {
 		compatible  = "qcom,cnss-qca6290";
+		qcom,mhi = <0x02>;
+		qcom,wlan-ramdump-dynamic = <0x400000>;
 		status = "okay";
+	};
+
+	qcom,mhi@1 {
+		compatible = "qcom,mhi";
+		qcom,pci-dev_id = <0x1100>;
+		qcom,pci-domain = <0x00>;
+		qcom,pci-bus = <0x01>;
+		qcom,pci-slot = <0x00>;
+		qcom,mhi-address-window = <0x00 0x40000000 0x01 0xffffffff>;
+		qcom,mhi-ready-timeout = <0x927c0>;
+		qcom,bhi-poll-timeout = <0x927c0>;
+		qcom,bhi-alignment = <0x40000>;
+		qcom,mhi-manage-boot;
+		qcom,mhi-fw-image = "QCA6290/amss.bin";
+		qcom,mhi-max-sbl = <0x40000>;
+		qcom,mhi-sg-size = <0x80000>;
+		mhi-chan-cfg-0 = <0x00 0x80 0x01 0x92>;
+		mhi-chan-cfg-1 = <0x01 0x80 0x01 0xa2>;
+		mhi-chan-cfg-4 = <0x04 0x80 0x01 0x92>;
+		mhi-chan-cfg-5 = <0x05 0x80 0x01 0xa2>;
+		mhi-chan-cfg-16 = <0x10 0x40 0x01 0x92>;
+		mhi-chan-cfg-17 = <0x11 0x40 0x01 0xa2>;
+		mhi-event-rings = <0x02>;
+		mhi-event-cfg-0 = <0x0a 0x00 0x01 0x00 0x01 0x31>;
+		mhi-event-cfg-1 = <0x80 0x01 0x01 0x00 0x01 0x31>;
+		linux,phandle = <0x02>;
+		phandle = <0x02>;
+	};
+	qcom,ipc_router_external_wlan_xprt {
+		compatible = "qcom,ipc_router_mhi_xprt";
+		qcom,mhi = <0x02>;
+		qcom,out-chan-id = <0x10>;
+		qcom,in-chan-id = <0x11>;
+		qcom,xprt-remote = "external-wlan";
+		qcom,xprt-linkid = <0x01>;
+		qcom,xprt-version = <0x03>;
 	};
 };
 
@@ -869,26 +940,26 @@
 	phy5: ethernet-phy@5 {
 		compatible ="ethernet-phy-ieee802.3-c45";
 		reg = <7>;
-	};	
+	};
 };
 
 &blsp1_uart3 {
 	status = "okay";
-	};
-	
+};
+
 &blsp1_uart5 {
 	status = "okay";
-	};
+};
 
 &pcie_qmp0 { 
 	//84000
-	status = "okay";	
-	};
+	status = "okay";
+};
 
 &pcie_phy0 {
 	//84200
 	status = "okay";
-	};	
+};
 
 &pcie0 {
 	//phy0 and phy2
@@ -896,27 +967,27 @@
 	phys = <&pcie_phy0>, <&pcie_phy2>;
 	phy-names = "pciephy", "pciephy";	
 	perst-gpio = <&tlmm 58 1>;
-	};
+};
 
 &pcie_qmp1 {
 	//8e000
 	status = "okay";
-	};
+};
 
 &pcie_phy1 {
 	//8e200
 	status = "okay";
-	};
+};
 
 &pcie1 {
 	//phy1
 	perst-gpio = <&tlmm 61 1>;
-	status = "okay";		
-	};
+	status = "okay";
+};
 
 &qpic_bam {
 	status = "okay";
-	};
+};
 
 &qpic_nand {
 	status = "okay";
@@ -929,6 +1000,121 @@
 		nand-ecc-strength = <4>;
 		nand-ecc-step-size = <512>;
 		nand-bus-width = <8>;
+
+		partition@0 {
+			label = "0:SBL1";
+			reg = <0x00 0x100000>;
+		};
+
+		partition@100000 {
+			label = "0:MIBIB";
+			reg = <0x100000 0x100000>;
+		};
+
+		partition@200000 {
+			label = "0:BOOTCONFIG";
+			reg = <0x200000 0x80000>;
+		};
+
+		partition@280000 {
+			label = "0:BOOTCONFIG1";
+			reg = <0x280000 0x80000>;
+		};
+
+		partition@300000 {
+			label = "0:QSEE";
+			reg = <0x300000 0x300000>;
+		};
+
+		partition@600000 {
+			label = "0:QSEE_1";
+			reg = <0x600000 0x300000>;
+		};
+
+		partition@900000 {
+			label = "0:DEVCFG";
+			reg = <0x900000 0x80000>;
+		};
+
+		partition@980000 {
+			label = "0:DEVCFG_1";
+			reg = <0x980000 0x80000>;
+		};
+
+		partition@a00000 {
+			label = "0:APDP";
+			reg = <0xa00000 0x80000>;
+		};
+
+		partition@a80000 {
+			label = "0:APDP_1";
+			reg = <0xa80000 0x80000>;
+		};
+
+		partition@b00000 {
+			label = "0:RPM";
+			reg = <0xb00000 0x80000>;
+		};
+
+		partition@b80000 {
+			label = "0:RPM_1";
+			reg = <0xb80000 0x80000>;
+		};
+
+		partition@c00000 {
+			label = "0:CDT";
+			reg = <0xc00000 0x80000>;
+		};
+
+		partition@c80000 {
+			label = "0:CDT_1";
+			reg = <0xc80000 0x80000>;
+		};
+
+		partition@d00000 {
+			label = "0:APPSBLENV";
+			reg = <0xd00000 0x80000>;
+		};
+
+		partition@d80000 {
+			label = "0:APPSBL";
+			reg = <0xd80000 0x100000>;
+		};
+
+		partition@e80000 {
+			label = "0:APPSBL_1";
+			reg = <0xe80000 0x100000>;
+		};
+
+		partition@f80000 {
+			label = "0:ART";
+			reg = <0xf80000 0x80000>;
+		};
+
+		partition@1000000 {
+			label = "rootfs";
+			reg = <0x1000000 0x2e00000>;
+		};
+
+		partition@3e00000 {
+			label = "0:WIFIFW";
+			reg = <0x3e00000 0x900000>;
+		};
+
+		partition@4700000 {
+			label = "rootfs_1";
+			reg = <0x4700000 0x2e00000>;
+		};
+
+		partition@7500000 {
+			label = "0:WIFIFW_1";
+			reg = <0x7500000 0x900000>;
+		};
+
+		partition@7e00000 {
+			label = "0:ETHPHYFW";
+			reg = <0x7e00000 0x80000>;
+		};
 	};
 };
 
@@ -982,9 +1168,8 @@
 	  0x14 0x9C
 	  0x80 0x04
 	  0x9F 0x1C>;
-
   phy_type= "utmi";
-	};
+};
 
 &ssphy_0 {	
 	status = "okay";
@@ -1020,7 +1205,6 @@
 	qca,host = <1>;
 	status = "okay";
 	qcom,usb-dbm = <&dbm_1p5>;
-
 };
 
 &dwc_0 {	
@@ -1052,18 +1236,22 @@
 	qcom,emulation = <1>;
 };
 
-&wifi{			
+&wifi{
 	status = "okay";	
-};	
+};
 
 &cryptobam {
 	status = "okay";
-	};
+};
 
 &crypto {
 	status = "okay";
-	};
+};
 
 &prng {
 	status = "okay";
-	};
+};
+
+&edma {
+	status = "okay";
+};
