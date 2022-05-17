@@ -5,7 +5,8 @@
 #include "ipq8074.dtsi"
 #include "ipq8074-ess.dtsi"
 #include "ipq8074-hk-cpu.dtsi"
-#include "ipq8074-cpr-regulator.dtsi"
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
 
 / {
 	#address-cells = <0x2>;
@@ -34,6 +35,20 @@
 		device_type = "memory";
 		reg = <0x0 0x40000000 0x0 0x20000000>;
 	};
+};
+
+&clocks {
+	sleep_clk: sleep_clk {
+		compatible = "fixed-clock";
+		clock-frequency = <32000>;
+		#clock-cells = <0>;
+	};
+
+	g761_clk: g761-oscillator{
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <32768>;
+  	};
 };
 
 &tlmm {
@@ -340,7 +355,9 @@
 				};
 				port@6 {
 					port_id = <6>;
-					phy_address = <5>;
+					phy_address = <7>;
+					compatible = "ethernet-phy-ieee802.3-c45";
+					ethernet-phy-ieee802.3-c45;
 				};
 			};
 
@@ -719,12 +736,11 @@
 	};
 
 	pcie_qmp2: phy@86000 {
-		compatible = "qcom,ipq8074-qmp-pcie-gen3-phy";
+		compatible = "qcom,ipq8074-qmp-pcie-gen2-phy";
 		reg = <0x00086000 0x1000>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
-
 		clocks = <&gcc GCC_PCIE0_AUX_CLK>,
 			<&gcc GCC_PCIE0_AHB_CLK>;
 		clock-names = "aux", "cfg_ahb";
@@ -732,7 +748,7 @@
 			<&gcc GCC_PCIE0PHY_PHY_BCR>;
 		reset-names = "phy",
 			"common";
-		status = "okay";
+		status = "disabled";
 		pcie_phy2: phy@86200 {
 			reg = <0x86200 0x16c>,
 				<0x86400 0x200>,
@@ -887,6 +903,7 @@
 		linux,phandle = <0x02>;
 		phandle = <0x02>;
 	};
+
 	qcom,ipc_router_external_wlan_xprt {
 		compatible = "qcom,ipc_router_mhi_xprt";
 		qcom,mhi = <0x02>;
@@ -900,6 +917,23 @@
 
 &blsp1_i2c2 {
 	status = "okay";
+	fan_left: g761@3e {
+		compatible = "gmt,g761";
+		reg = <0x3e>;
+		clocks =<&g761_clk>;
+		fan_gear_mode = <0>;
+		fan_starty = <1>;
+		pwm_polarity = <0>;
+	};
+
+	fan_right: g761@49 {
+		compatible = "gmt,g761";
+		reg = <0x49>;
+		clocks =<&g761_clk>;
+		fan_gear_mode = <0>;
+		fan_starty = <1>;
+		pwm_polarity = <0>;
+	};
 };
 
 &blsp1_i2c3 {
@@ -921,7 +955,8 @@
 	status = "okay";
 	pinctrl-0 = <&mdio_pins>;
 	pinctrl-names = "default";
-	
+	reset-gpios = <&tlmm 37 GPIO_ACTIVE_LOW>;
+
 	phy0: ethernet-phy@0 {
 		reg = <0>;
 	};
@@ -991,130 +1026,16 @@
 
 &qpic_nand {
 	status = "okay";
-	nandcs@0 {
-		compatible = "qcom,nandcs";
+	nand@0 {
 		reg = <0>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
 		nand-ecc-strength = <4>;
 		nand-ecc-step-size = <512>;
 		nand-bus-width = <8>;
 
-		partition@0 {
-			label = "0:SBL1";
-			reg = <0x00 0x100000>;
+		partitions {
+			compatible = "qcom,smem-part";
 		};
 
-		partition@100000 {
-			label = "0:MIBIB";
-			reg = <0x100000 0x100000>;
-		};
-
-		partition@200000 {
-			label = "0:BOOTCONFIG";
-			reg = <0x200000 0x80000>;
-		};
-
-		partition@280000 {
-			label = "0:BOOTCONFIG1";
-			reg = <0x280000 0x80000>;
-		};
-
-		partition@300000 {
-			label = "0:QSEE";
-			reg = <0x300000 0x300000>;
-		};
-
-		partition@600000 {
-			label = "0:QSEE_1";
-			reg = <0x600000 0x300000>;
-		};
-
-		partition@900000 {
-			label = "0:DEVCFG";
-			reg = <0x900000 0x80000>;
-		};
-
-		partition@980000 {
-			label = "0:DEVCFG_1";
-			reg = <0x980000 0x80000>;
-		};
-
-		partition@a00000 {
-			label = "0:APDP";
-			reg = <0xa00000 0x80000>;
-		};
-
-		partition@a80000 {
-			label = "0:APDP_1";
-			reg = <0xa80000 0x80000>;
-		};
-
-		partition@b00000 {
-			label = "0:RPM";
-			reg = <0xb00000 0x80000>;
-		};
-
-		partition@b80000 {
-			label = "0:RPM_1";
-			reg = <0xb80000 0x80000>;
-		};
-
-		partition@c00000 {
-			label = "0:CDT";
-			reg = <0xc00000 0x80000>;
-		};
-
-		partition@c80000 {
-			label = "0:CDT_1";
-			reg = <0xc80000 0x80000>;
-		};
-
-		partition@d00000 {
-			label = "0:APPSBLENV";
-			reg = <0xd00000 0x80000>;
-		};
-
-		partition@d80000 {
-			label = "0:APPSBL";
-			reg = <0xd80000 0x100000>;
-		};
-
-		partition@e80000 {
-			label = "0:APPSBL_1";
-			reg = <0xe80000 0x100000>;
-		};
-
-		partition@f80000 {
-			label = "0:ART";
-			reg = <0xf80000 0x80000>;
-		};
-
-		partition@1000000 {
-			label = "rootfs";
-			reg = <0x1000000 0x2e00000>;
-		};
-
-		partition@3e00000 {
-			label = "0:WIFIFW";
-			reg = <0x3e00000 0x900000>;
-		};
-
-		partition@4700000 {
-			label = "rootfs_1";
-			reg = <0x4700000 0x2e00000>;
-		};
-
-		partition@7500000 {
-			label = "0:WIFIFW_1";
-			reg = <0x7500000 0x900000>;
-		};
-
-		partition@7e00000 {
-			label = "0:ETHPHYFW";
-			reg = <0x7e00000 0x80000>;
-		};
 	};
 };
 
@@ -1132,18 +1053,7 @@
 	reg-names = "qusb_phy_base",
 	  "qscratch_base",
 	  "ref_clk_addr",
-	  "usb3_guctl_addr";
-
-	qcom,qusb-phy-init-seq = <0xF8 0x80
-	  0x83 0x84
-	  0x83 0x88
-	  0xC0 0x8C
-	  0x30 0x08
-	  0x79 0x0C
-	  0x21 0x10
-	  0x14 0x9C
-	  0x80 0x04
-	  0x9F 0x1C>;
+	  "usb3_guctl_addr";	
 	phy_type= "utmi";
 };
 
@@ -1157,17 +1067,7 @@
   	reg-names = "qusb_phy_base",
 	  "qscratch_base",
 	  "ref_clk_addr",
-	  "usb3_guctl_addr";
-  	qcom,qusb-phy-init-seq = <0xF8 0x80
-	  0x83 0x84
-	  0x83 0x88
-	  0xC0 0x8C
-	  0x30 0x08
-	  0x79 0x0C
-	  0x21 0x10
-	  0x14 0x9C
-	  0x80 0x04
-	  0x9F 0x1C>;
+	  "usb3_guctl_addr";  	
   phy_type= "utmi";
 };
 
@@ -1193,21 +1093,20 @@
 		"ahb2phy_base";
 };
 
-&usb_0 {	
-	//USB3_0 in GPL
-	//Reg also exists under ssphy_0
+&usb_0 {
+	status = "okay";
 	reg = <0x8AF8800 0x100>,
 		<0x8A00000 0xcd00>;
 	reg-names = "qscratch_base", "dwc3_base";
 	assigned-clock-rates = <133330000>,
 					       <133330000>,
 					       <20000000>;
-	qca,host = <1>;
-	status = "okay";
+	qca,host = <1>;	
 	qcom,usb-dbm = <&dbm_1p5>;
 };
 
-&dwc_0 {	
+&dwc_0 {
+	interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_LOW>;
 	tx-fifo-resize;
 	snps,usb3-u1u2-disable;
 	snps,nominal-elastic-buffer;
@@ -1216,19 +1115,18 @@
 };
 
 &usb_1 {
-	//USB3_1 in GPL
-	//Reg also exists under ssphy_1
+	status = "okay";
 	reg = <0x8CF8800 0x100>,
 		<0x8C00000 0xcd00>;
 	reg-names = "qscratch_base", "dwc3_base";
 	assigned-clock-rates = <133330000>,
 					       <133330000>,
 					       <20000000>;
-			qca,host = <1>;
-	status = "okay";
+	qca,host = <1>;	
 };
 
-&dwc_1 {	
+&dwc_1 {
+	interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_LOW>;
 	tx-fifo-resize;
 	snps,usb3-u1u2-disable;
 	snps,nominal-elastic-buffer;
